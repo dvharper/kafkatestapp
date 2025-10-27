@@ -29,7 +29,6 @@ public class KafkaToEmailIntegrationTest {
     @Autowired
     private EmailService emailService;
 
-    // ✅ Мокаем EmailService
     @Configuration
     static class TestConfig {
         @Bean
@@ -39,7 +38,7 @@ public class KafkaToEmailIntegrationTest {
         }
     }
 
-    // ✅ Добавляем KafkaTemplate (продюсер) только для теста
+
     @Configuration
     static class TestKafkaProducerConfig {
 
