@@ -3,10 +3,10 @@ server:
 
 spring:
   profiles:
-    active: native    # <--- заставит Config Server работать в native режиме
+    active: native
   cloud:
     config:
       server:
         native:
-          # путь к "репо" с конфигами (относительно рабочего каталога приложения)
+
           search-locations: file:./config-repo

@@ -8,6 +8,6 @@ spring:
     username: sa
     password:
 kafka:
-  bootstrap-servers: localhost:9092
+  bootstrap-servers: kafka:9092
 mail:
   from: no-reply@example.local

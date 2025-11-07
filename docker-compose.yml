@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   mailhog:
@@ -7,6 +7,19 @@ services:
     ports:
       - "1025:1025"
       - "8025:8025"
+    networks:
+      - microservices-net
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - microservices-net
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeper
@@ -15,7 +28,8 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
-
+    networks:
+      - microservices-net
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka
@@ -26,17 +40,68 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - microservices-net
 
-  kafdrop:
-    image: obsidiandynamics/kafdrop:3.31.0
-    container_name: kafdrop
+  config-server:
+    build: ./config-server
     ports:
-      - "9000:9000"
+      - "8888:8888"
+    volumes:
+      - ./config-repo:/app/config-repo
+    networks:
+      - microservices-net
+
+  discovery-server:
+    build: ./discovery-server
+    ports:
+      - "8761:8761"
+    networks:
+      - microservices-net
+    depends_on:
+      - config-server
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "8081:8081"
     environment:
-      KAFKA_BROKERCONNECT: "kafka:9092"
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - microservices-net
     depends_on:
       - kafka
+      - postgres
+      - config-server
+      - discovery-server
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "8082:8082"
+    networks:
+      - microservices-net
+    depends_on:
+      - kafka
+      - config-server
+      - discovery-server
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    networks:
+      - microservices-net
+    depends_on:
+      - discovery-server
+      - config-server
+      - user-service
+      - notification-service
+
+networks:
+  microservices-net:
+    driver: bridge
 

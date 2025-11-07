@@ -20,7 +20,7 @@
       <module name="config-server" options="-parameters" />
       <module name="discovery-server" options="-parameters" />
       <module name="notification-service" options="-parameters" />
-      <module name="user-service" options="-parameters" />
+      <module name="user-service" options="" />
     </option>
   </component>
 </project>
