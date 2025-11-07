@@ -1,0 +1,12 @@
+server:
+  port: 8082
+
+kafka:
+  bootstrap-servers: localhost:9092
+
+mail:
+  host: smtp.example.local
+  port: 2525
+  username: test
+  password: test
+  from: no-reply@example.local
