@@ -1,16 +1,32 @@
 spring:
+  application:
+    name: notification-service
+  config:
+    import: "optional:configserver:http://config-server:8888"
+
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
     consumer:
       group-id: notification-group
       auto-offset-reset: earliest
+
   mail:
-    host: localhost
+    host: mailhog
     port: 1025
-    username: ""
-    password: ""
+    username:
+    password:
     properties:
-      mail.smtp.auth: false
-      mail.smtp.starttls.enable: false
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+        debug: true
+
 server:
-  port: 8081
+  port: 8082
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/

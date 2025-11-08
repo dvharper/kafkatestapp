@@ -1,3 +1,38 @@
 spring:
+  application:
+    name: user-service
+
+  config:
+    import: "optional:configserver:http://config-server:8888"
+
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
+
+  datasource:
+    url: jdbc:h2:mem:userdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+app:
+  kafka:
+    topic: user-events
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.kafka: INFO
+    org.hibernate.SQL: DEBUG
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka/
